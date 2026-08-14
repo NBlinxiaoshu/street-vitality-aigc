@@ -1,0 +1,50 @@
+{
+  "界面感知": {
+    "principle": {
+      "cn": "界面感知（人可看见）",
+      "en": "interface_perception"
+    },
+    "indicators": {
+      "transparency_degree": {
+        "name": { "cn": "通透程度" },
+        "tags": [
+          {
+            "tag_en": "low_transparency",
+            "tag_cn": "界面低通透",
+            "description": "以不透明墙体为主，开窗/玻璃比例较低，室内难以清晰辨识。"
+          },
+          {
+            "tag_en": "medium_transparency",
+            "tag_cn": "界面半通透",
+            "description": "半透明或开窗比例中等，能隐约感知室内活动与光影。"
+          },
+          {
+            "tag_en": "high_transparency",
+            "tag_cn": "界面高通透",
+            "description": "透明材料/大面积玻璃为主，室内外视觉联系强。"
+          }
+        ]
+      },
+      "entrance_density": {
+        "name": { "cn": "开口密度" },
+        "tags": [
+          {
+            "tag_en": "limited_entrance",
+            "tag_cn": "面街开口少",
+            "description": "面向街道的出入口数量偏少，界面连续度高。"
+          },
+          {
+            "tag_en": "moderate_entrance",
+            "tag_cn": "面街开口中",
+            "description": "出入口数量适中，节奏均衡。"
+          },
+          {
+            "tag_en": "multiple_entrance",
+            "tag_cn": "面街开口多",
+            "description": "出入口密集，界面被频繁打断，步行可达性强。"
+          }
+        ]
+      }
+    }
+  }
+}

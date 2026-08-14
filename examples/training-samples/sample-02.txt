@@ -1,0 +1,1 @@
+street_vitality, overhang_canopy, street_spillout, medium_transparency, multiple_entrance

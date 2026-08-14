@@ -1,0 +1,31 @@
+.DS_Store
+Icon?
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local secrets and runtime state
+api_config.json
+.env
+.env.*
+!.env.example
+
+# Generated outputs
+outputs/
+output/
+statistics/
+labeling_statistics.json
+labeling_report.txt
+
+# Training artifacts and large model files
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+logs/
+
+# Editors
+.idea/
+.vscode/

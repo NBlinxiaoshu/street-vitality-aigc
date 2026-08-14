@@ -1,0 +1,19 @@
+# Visual Tension 半自动图像标注工具 - 依赖库列表
+# Python版本要求：3.8+
+
+# UI框架
+customtkinter>=5.2.0
+
+# 图像处理
+Pillow>=10.0.0
+
+# HTTP请求库
+requests>=2.31.0
+urllib3>=2.0.0
+
+# 其他可能需要的库（根据具体环境）
+# tkinter - 通常随Python安装自带，无需单独安装
+# json - Python标准库，无需安装
+# threading - Python标准库，无需安装
+# base64 - Python标准库，无需安装
+# os - Python标准库，无需安装

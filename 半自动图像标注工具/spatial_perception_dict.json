@@ -1,0 +1,45 @@
+{
+  "空间感知": {
+    "principle": {
+      "cn": "空间感知（人可停留）",
+      "en": "spatial_perception"
+    },
+    "indicators": {
+      "no_gray_space": {
+        "name": { "cn": "无灰空间" },
+        "tags": [
+          {
+            "tag_en": "flat_facade",
+            "tag_cn": "无灰空间",
+            "description": "界面与街道之间几乎无过渡半室外空间（灰空间），形成平直的临街面。"
+          }
+        ]
+      },
+      "boundary_operations": {
+        "name": { "cn": "空间边界处理" },
+        "tags": [
+          {
+            "tag_en": "facade_setback",
+            "tag_cn": "界面退让",
+            "description": "建筑首层或立面整体后退，形成可停留的前场或骑楼式步行空间。"
+          },
+          {
+            "tag_en": "overhang_canopy",
+            "tag_cn": "悬挑覆盖",
+            "description": "以雨棚/悬挑板等形成覆盖的半室外停留界面。"
+          },
+          {
+            "tag_en": "street_spillout",
+            "tag_cn": "街道外摆",
+            "description": "咖啡/餐饮等界面向街道外扩，设置临时座椅/陈列，增强可停留性与互动。"
+          },
+          {
+            "tag_en": "spatial_folding",
+            "tag_cn": "空间折叠",
+            "description": "界面折线或转折形成内凹/外凸的停留凹角与夹角空间。"
+          }
+        ]
+      }
+    }
+  }
+}
