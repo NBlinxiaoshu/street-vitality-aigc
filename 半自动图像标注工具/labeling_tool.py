@@ -23,8 +23,26 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 # 设置 customtkinter 外观
-ctk.set_appearance_mode("dark")
+ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
+
+COLORS = {
+    "app_bg": "#F3F5F9",
+    "surface": "#FFFFFF",
+    "surface_alt": "#F8FAFC",
+    "canvas": "#111827",
+    "border": "#DDE3EC",
+    "divider": "#E7EBF1",
+    "text": "#172033",
+    "muted": "#667085",
+    "primary": "#2563EB",
+    "primary_hover": "#1D4ED8",
+    "primary_soft": "#EFF6FF",
+    "ai": "#0F766E",
+    "ai_hover": "#115E59",
+    "ai_soft": "#ECFDF5",
+    "warning": "#D97706",
+}
 
 
 # ==================== 配置管理函数 ====================
@@ -320,7 +338,13 @@ class ImagePanel(ctk.CTkFrame):
     """左侧图片面板：图片显示、裁剪和导航功能"""
 
     def __init__(self, master, app):
-        super().__init__(master)
+        super().__init__(
+            master,
+            fg_color=COLORS["surface"],
+            corner_radius=14,
+            border_width=1,
+            border_color=COLORS["border"]
+        )
         self.app = app
 
         # 裁剪相关状态
@@ -338,32 +362,49 @@ class ImagePanel(ctk.CTkFrame):
 
     def setup_ui(self):
         """设置 UI 组件"""
+        header = ctk.CTkFrame(self, fg_color="transparent")
+        header.pack(fill="x", padx=18, pady=(18, 10))
+        ctk.CTkLabel(
+            header, text="01  数据预处理",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color=COLORS["text"]
+        ).pack(anchor="w")
+        ctk.CTkLabel(
+            header, text="导入、预览并统一训练图像比例",
+            font=ctk.CTkFont(size=11), text_color=COLORS["muted"]
+        ).pack(anchor="w", pady=(3, 0))
+
         # 顶部按钮区域
         top_frame = ctk.CTkFrame(self, fg_color="transparent")
-        top_frame.pack(fill="x", padx=10, pady=10)
+        top_frame.pack(fill="x", padx=18, pady=(0, 8))
 
         self.select_folder_btn = ctk.CTkButton(
             top_frame, text="📁 选择图片文件夹",
             command=self.select_folder,
-            height=35, font=ctk.CTkFont(size=14, weight="bold")
+            height=40, font=ctk.CTkFont(size=13, weight="bold"),
+            fg_color=COLORS["primary"], hover_color=COLORS["primary_hover"],
+            corner_radius=8
         )
         self.select_folder_btn.pack(fill="x")
 
         # 进度显示
         self.progress_label = ctk.CTkLabel(
             top_frame, text="未加载图片",
-            font=ctk.CTkFont(size=12)
+            font=ctk.CTkFont(size=11), text_color=COLORS["muted"]
         )
         self.progress_label.pack(pady=(10, 0))
 
         # 图片显示区域（固定尺寸，调整为500x500）
-        self.image_frame = ctk.CTkFrame(self, fg_color="#1a1a1a", width=500, height=500)
-        self.image_frame.pack(fill="none", expand=False, padx=10, pady=10)
+        self.image_frame = ctk.CTkFrame(
+            self, fg_color=COLORS["canvas"], width=500, height=500,
+            corner_radius=10, border_width=1, border_color="#273449"
+        )
+        self.image_frame.pack(fill="none", expand=False, padx=18, pady=10)
         self.image_frame.pack_propagate(False)  # 防止内容改变frame尺寸
 
         self.image_label = ctk.CTkLabel(
             self.image_frame, text="请选择图片文件夹",
-            font=ctk.CTkFont(size=14)
+            font=ctk.CTkFont(size=14), text_color="#E5E7EB"
         )
         self.image_label.place(relx=0.5, rely=0.5, anchor="center")  # 使用place居中
 
@@ -373,8 +414,11 @@ class ImagePanel(ctk.CTkFrame):
         self.image_label.bind("<ButtonRelease-1>", self.on_crop_end)
 
         # 裁剪控制区域
-        crop_frame = ctk.CTkFrame(self)
-        crop_frame.pack(fill="x", padx=10, pady=10)
+        crop_frame = ctk.CTkFrame(
+            self, fg_color=COLORS["surface_alt"], corner_radius=10,
+            border_width=1, border_color=COLORS["border"]
+        )
+        crop_frame.pack(fill="x", padx=18, pady=10)
 
         ctk.CTkLabel(
             crop_frame, text="裁剪比例:",
@@ -420,7 +464,7 @@ class ImagePanel(ctk.CTkFrame):
         self.crop_info_label = ctk.CTkLabel(
             crop_frame, text="💡 拖动裁剪框调整位置和大小",
             font=ctk.CTkFont(size=10),
-            text_color="#888888"
+            text_color=COLORS["muted"]
         )
         self.crop_info_label.pack(pady=5)
 
@@ -428,7 +472,7 @@ class ImagePanel(ctk.CTkFrame):
         self.crop_status_label = ctk.CTkLabel(
             crop_frame, text="",
             font=ctk.CTkFont(size=11, weight="bold"),
-            text_color="#ff9800"
+            text_color=COLORS["warning"]
         )
         self.crop_status_label.pack(pady=(0, 5))
 
@@ -439,20 +483,21 @@ class ImagePanel(ctk.CTkFrame):
         self.apply_crop_btn = ctk.CTkButton(
             crop_btn_frame, text="✂️ 应用裁剪",
             command=self.apply_crop,
-            height=32, fg_color="#1f6aa5"
+            height=34, fg_color=COLORS["primary"], hover_color=COLORS["primary_hover"]
         )
         self.apply_crop_btn.pack(side="left", expand=True, fill="x", padx=(0, 5))
 
         self.reset_crop_btn = ctk.CTkButton(
             crop_btn_frame, text="🔄 重置",
             command=self.reset_crop,
-            height=32, fg_color="#666666"
+            height=34, fg_color="#E7ECF3", hover_color="#D7DEE9",
+            text_color=COLORS["text"]
         )
         self.reset_crop_btn.pack(side="left", expand=True, fill="x")
 
         # 导航按钮
         nav_frame = ctk.CTkFrame(self, fg_color="transparent")
-        nav_frame.pack(fill="x", padx=10, pady=(0, 10))
+        nav_frame.pack(fill="x", padx=18, pady=(0, 18))
 
         self.prev_btn = ctk.CTkButton(
             nav_frame, text="← 上一张",
@@ -1043,7 +1088,12 @@ class LabelingPanel(ctk.CTkScrollableFrame):
     """中间标签选择面板：动态生成标签复选框"""
 
     def __init__(self, master, app):
-        super().__init__(master, fg_color="#1a1a1a")
+        super().__init__(
+            master, fg_color=COLORS["surface"], corner_radius=14,
+            border_width=1, border_color=COLORS["border"],
+            scrollbar_button_color="#CBD5E1",
+            scrollbar_button_hover_color="#94A3B8"
+        )
         self.app = app
         self.checkboxes = {}  # 存储所有复选框 {英文key: CTkCheckBox}
 
@@ -1053,10 +1103,15 @@ class LabelingPanel(ctk.CTkScrollableFrame):
         """根据 JSON 配置动态生成 UI"""
         # 标题
         title_label = ctk.CTkLabel(
-            self, text="人工标签选择",
-            font=ctk.CTkFont(size=16, weight="bold")
+            self, text="02  人机协同标注",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color=COLORS["text"]
         )
-        title_label.pack(pady=(10, 20))
+        title_label.pack(anchor="w", padx=18, pady=(18, 0))
+        ctk.CTkLabel(
+            self, text="AI 初标后由人工复核，保证标签可靠",
+            font=ctk.CTkFont(size=11), text_color=COLORS["muted"]
+        ).pack(anchor="w", padx=18, pady=(3, 12))
 
         # 加载配置
         spatial_dict = self.app.config.get("spatial_perception", {})
@@ -1071,8 +1126,8 @@ class LabelingPanel(ctk.CTkScrollableFrame):
 
         if interface_dict:
             # 添加分隔线
-            separator = ctk.CTkFrame(self, height=2, fg_color="#3a3a3a")
-            separator.pack(fill="x", padx=20, pady=20)
+            separator = ctk.CTkFrame(self, height=1, fg_color=COLORS["divider"])
+            separator.pack(fill="x", padx=18, pady=14)
 
             # 获取第一个（也是唯一一个）原则的数据
             for principle_name, principle_data in interface_dict.items():
@@ -1083,16 +1138,17 @@ class LabelingPanel(ctk.CTkScrollableFrame):
         """构建一个原则区域"""
         # 原则标题
         principle_cn = principle_dict.get("principle", {}).get("cn", "")
-        principle_en = principle_dict.get("principle", {}).get("en", "")
-
-        principle_frame = ctk.CTkFrame(self, fg_color="#252525", corner_radius=10)
-        principle_frame.pack(fill="x", padx=15, pady=10)
+        principle_frame = ctk.CTkFrame(
+            self, fg_color=COLORS["surface_alt"], corner_radius=10,
+            border_width=1, border_color=COLORS["border"]
+        )
+        principle_frame.pack(fill="x", padx=12, pady=8)
 
         principle_label = ctk.CTkLabel(
             principle_frame,
-            text=f"{principle_cn} ({principle_en})",
+            text=principle_cn,
             font=ctk.CTkFont(size=15, weight="bold"),
-            text_color="#4a9eff"
+            text_color=COLORS["primary"]
         )
         principle_label.pack(anchor="w", padx=15, pady=(15, 10))
 
@@ -1113,7 +1169,7 @@ class LabelingPanel(ctk.CTkScrollableFrame):
             indicator_frame,
             text=f"▸ {indicator_cn}",
             font=ctk.CTkFont(size=13, weight="bold"),
-            text_color="#66b3ff"
+            text_color=COLORS["primary"]
         )
         indicator_label.pack(anchor="w", padx=10)
 
@@ -1132,6 +1188,10 @@ class LabelingPanel(ctk.CTkScrollableFrame):
             parent,
             text=tag_cn,
             font=ctk.CTkFont(size=12),
+            text_color=COLORS["text"],
+            fg_color=COLORS["primary"],
+            hover_color=COLORS["primary_hover"],
+            border_color="#98A2B3",
             command=lambda: self.app.on_tag_changed()
         )
         checkbox.pack(anchor="w", padx=30, pady=3)
@@ -1159,7 +1219,10 @@ class OutputPanel(ctk.CTkFrame):
     """右侧输出面板：API配置、触发词、AI标签、最终标签编辑和保存"""
 
     def __init__(self, master, app):
-        super().__init__(master)
+        super().__init__(
+            master, fg_color=COLORS["surface"], corner_radius=14,
+            border_width=1, border_color=COLORS["border"]
+        )
         self.app = app
         self.api_config = load_api_config()
         self.prompt_config = load_prompt_config()
@@ -1167,15 +1230,27 @@ class OutputPanel(ctk.CTkFrame):
 
     def setup_ui(self):
         """设置 UI 组件"""
+        header = ctk.CTkFrame(self, fg_color="transparent")
+        header.pack(fill="x", padx=16, pady=(18, 10))
+        ctk.CTkLabel(
+            header, text="03  AI 辅助与导出",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color=COLORS["text"]
+        ).pack(anchor="w")
+        ctk.CTkLabel(
+            header, text="生成建议、校对标签并保存训练对",
+            font=ctk.CTkFont(size=11), text_color=COLORS["muted"]
+        ).pack(anchor="w", pady=(3, 0))
+
         # ===== 1. 触发词区域（置顶、固定、醒目） =====
         trigger_container = ctk.CTkFrame(
             self,
-            fg_color="#8b5cf6",
-            corner_radius=8,
-            border_width=2,
-            border_color="#a78bfa"
+            fg_color=COLORS["primary_soft"],
+            corner_radius=10,
+            border_width=1,
+            border_color="#BFDBFE"
         )
-        trigger_container.pack(fill="x", padx=8, pady=(8, 10))
+        trigger_container.pack(fill="x", padx=16, pady=(0, 10))
 
         # 内层padding frame
         trigger_inner = ctk.CTkFrame(trigger_container, fg_color="transparent")
@@ -1187,19 +1262,19 @@ class OutputPanel(ctk.CTkFrame):
 
         ctk.CTkLabel(
             trigger_header,
-            text="📌 触发词 (Trigger Word)",
+            text="触发词  Trigger Word",
             font=ctk.CTkFont(size=13, weight="bold"),
-            text_color="#ffffff"
+            text_color=COLORS["primary"]
         ).pack(side="left")
 
         # 固定标识
         ctk.CTkLabel(
             trigger_header,
-            text="[固定]",
+            text="固定",
             font=ctk.CTkFont(size=9, weight="bold"),
-            text_color="#fbbf24",
-            fg_color="#7c3aed",
-            corner_radius=3,
+            text_color=COLORS["primary"],
+            fg_color="#DBEAFE",
+            corner_radius=5,
             padx=6,
             pady=1
         ).pack(side="right")
@@ -1211,21 +1286,22 @@ class OutputPanel(ctk.CTkFrame):
             height=32,
             font=ctk.CTkFont(size=12),
             fg_color="#ffffff",
-            text_color="#000000",
-            border_width=0
+            text_color=COLORS["text"],
+            border_width=1,
+            border_color="#BFDBFE"
         )
         self.trigger_entry.pack(fill="x")
         self.trigger_entry.insert(0, "street_vitality")
 
         # 分隔线
-        ctk.CTkFrame(self, height=1, fg_color="#3b3b3b").pack(fill="x", padx=8, pady=(0, 8))
+        ctk.CTkFrame(self, height=1, fg_color=COLORS["divider"]).pack(fill="x", padx=16, pady=(0, 10))
 
         # ===== 2. API配置区域 =====
         api_frame = ctk.CTkFrame(self, fg_color="transparent")
-        api_frame.pack(fill="x", padx=8, pady=(0, 8))
+        api_frame.pack(fill="x", padx=16, pady=(0, 10))
 
         # API配置标题
-        api_header = ctk.CTkFrame(api_frame, fg_color="#2b2b2b", corner_radius=6)
+        api_header = ctk.CTkFrame(api_frame, fg_color=COLORS["surface_alt"], corner_radius=7)
         api_header.pack(fill="x", pady=(0, 4))
 
         ctk.CTkLabel(
@@ -1296,17 +1372,20 @@ class OutputPanel(ctk.CTkFrame):
             text="💾 保存配置",
             command=self.save_api_config_action,
             height=28,
-            fg_color="#1f538d",
-            hover_color="#14375e",
+            fg_color=COLORS["primary"],
+            hover_color=COLORS["primary_hover"],
             font=ctk.CTkFont(size=11)
         ).pack(fill="x")
 
         # 分隔线
-        ctk.CTkFrame(self, height=1, fg_color="#3b3b3b").pack(fill="x", padx=8, pady=(0, 8))
+        ctk.CTkFrame(self, height=1, fg_color=COLORS["divider"]).pack(fill="x", padx=16, pady=(0, 10))
 
         # ===== 3. AI标签生成区域 =====
-        ai_frame = ctk.CTkFrame(self, fg_color="#2b2b2b", corner_radius=8)
-        ai_frame.pack(fill="x", padx=8, pady=(0, 8))
+        ai_frame = ctk.CTkFrame(
+            self, fg_color=COLORS["ai_soft"], corner_radius=10,
+            border_width=1, border_color="#A7F3D0"
+        )
+        ai_frame.pack(fill="x", padx=16, pady=(0, 10))
 
         # AI标签标题
         ai_header = ctk.CTkFrame(ai_frame, fg_color="transparent")
@@ -1314,8 +1393,9 @@ class OutputPanel(ctk.CTkFrame):
 
         ctk.CTkLabel(
             ai_header,
-            text="🤖 AI 自动标签",
-            font=ctk.CTkFont(size=12, weight="bold")
+            text="AI 自动标签",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            text_color=COLORS["ai"]
         ).pack(side="left")
 
         # 生成按钮（醒目的绿色）
@@ -1325,8 +1405,8 @@ class OutputPanel(ctk.CTkFrame):
             command=self.generate_ai_tags,
             width=100,
             height=30,
-            fg_color="#2d8659",
-            hover_color="#1e5f3f",
+            fg_color=COLORS["ai"],
+            hover_color=COLORS["ai_hover"],
             font=ctk.CTkFont(size=11, weight="bold")
         )
         self.generate_btn.pack(side="right")
@@ -1336,15 +1416,16 @@ class OutputPanel(ctk.CTkFrame):
             ai_frame,
             height=60,
             font=ctk.CTkFont(size=10),
-            fg_color="#1e1e1e",
-            border_color="#3b3b3b",
+            fg_color=COLORS["surface"],
+            text_color=COLORS["text"],
+            border_color="#A7F3D0",
             border_width=1
         )
         self.ai_tags_text.pack(fill="x", padx=10, pady=(0, 10))
 
         # ===== 4. 最终标签区域 =====
         final_frame = ctk.CTkFrame(self, fg_color="transparent")
-        final_frame.pack(fill="both", expand=True, padx=8, pady=(0, 8))
+        final_frame.pack(fill="both", expand=True, padx=16, pady=(0, 10))
 
         ctk.CTkLabel(
             final_frame,
@@ -1356,7 +1437,11 @@ class OutputPanel(ctk.CTkFrame):
             final_frame,
             height=100,
             font=ctk.CTkFont(size=10),
-            wrap="word"
+            wrap="word",
+            fg_color=COLORS["surface_alt"],
+            text_color=COLORS["text"],
+            border_width=1,
+            border_color=COLORS["border"]
         )
         self.final_tags_text.pack(fill="both", expand=True)
         # 绑定失去焦点和回车事件，实现内容同步到人工标签
@@ -1365,7 +1450,7 @@ class OutputPanel(ctk.CTkFrame):
 
         # ===== 5. 保存控制区域 =====
         save_frame = ctk.CTkFrame(self, fg_color="transparent")
-        save_frame.pack(fill="x", padx=8, pady=(0, 8))
+        save_frame.pack(fill="x", padx=16, pady=(0, 16))
 
         # 输出文件夹选择
         self.select_output_btn = ctk.CTkButton(
@@ -1381,7 +1466,7 @@ class OutputPanel(ctk.CTkFrame):
             save_frame,
             text="未选择输出文件夹",
             font=ctk.CTkFont(size=9),
-            text_color="#888888"
+            text_color=COLORS["muted"]
         )
         self.output_path_label.pack(pady=(2, 6))
 
@@ -1395,7 +1480,9 @@ class OutputPanel(ctk.CTkFrame):
             command=self.save_only,
             height=36,
             width=100,
-            font=ctk.CTkFont(size=11)
+            font=ctk.CTkFont(size=11),
+            fg_color="#E7ECF3", hover_color="#D7DEE9",
+            text_color=COLORS["text"]
         )
         self.save_only_btn.pack(side="left", padx=(0, 6))
 
@@ -1404,8 +1491,8 @@ class OutputPanel(ctk.CTkFrame):
             text="💾 保存 & 下一张 →",
             command=self.save_and_next,
             height=36,
-            fg_color="#d97706",
-            hover_color="#b45309",
+            fg_color=COLORS["ai"],
+            hover_color=COLORS["ai_hover"],
             font=ctk.CTkFont(size=11, weight="bold")
         )
         self.save_next_btn.pack(side="left", fill="x", expand=True)
@@ -1647,8 +1734,10 @@ class App(ctk.CTk):
         }
 
         # 窗口配置
-        self.title("Visual Tension 图像标注工具")
-        self.geometry("1400x800")
+        self.title("Street Vitality · AI 数据标注工作台")
+        self.geometry("1500x900")
+        self.minsize(1180, 720)
+        self.configure(fg_color=COLORS["app_bg"])
 
         # 加载配置
         self.load_config()
@@ -1846,25 +1935,25 @@ class App(ctk.CTk):
         """设置主界面"""
         # 创建主容器
         main_container = ctk.CTkFrame(self, fg_color="transparent")
-        main_container.pack(fill="both", expand=True, padx=10, pady=10)
+        main_container.pack(fill="both", expand=True, padx=16, pady=16)
 
         # 三列布局
         # 左侧：图片面板（40%）
         self.image_panel = ImagePanel(main_container, self)
-        self.image_panel.grid(row=0, column=0, sticky="nsew", padx=(0, 5))
+        self.image_panel.grid(row=0, column=0, sticky="nsew", padx=(0, 6))
 
         # 中间：标签选择面板（30%）
         self.labeling_panel = LabelingPanel(main_container, self)
-        self.labeling_panel.grid(row=0, column=1, sticky="nsew", padx=5)
+        self.labeling_panel.grid(row=0, column=1, sticky="nsew", padx=6)
 
         # 右侧：输出面板（30%）
         self.output_panel = OutputPanel(main_container, self)
-        self.output_panel.grid(row=0, column=2, sticky="nsew", padx=(5, 0))
+        self.output_panel.grid(row=0, column=2, sticky="nsew", padx=(6, 0))
 
         # 配置列权重
-        main_container.grid_columnconfigure(0, weight=4)
-        main_container.grid_columnconfigure(1, weight=3)
-        main_container.grid_columnconfigure(2, weight=3)
+        main_container.grid_columnconfigure(0, weight=5, minsize=540)
+        main_container.grid_columnconfigure(1, weight=3, minsize=330)
+        main_container.grid_columnconfigure(2, weight=3, minsize=360)
         main_container.grid_rowconfigure(0, weight=1)
 
     def load_image_folder(self, folder: str):
